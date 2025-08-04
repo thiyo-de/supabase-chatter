@@ -4,13 +4,15 @@ import { Navigate } from 'react-router-dom';
 import { ChatRoom } from '@/components/ChatRoom';
 import { UserListSidebar } from '@/components/UserListSidebar';
 import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { LogOut, Menu } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 export default function Chat() {
   const { user, signOut, loading } = useAuth();
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -83,32 +85,70 @@ export default function Chat() {
     return <Navigate to="/auth" replace />;
   }
 
-  return (
-    <div className="h-screen flex bg-background">
-      {/* Sidebar */}
-      <div className="w-80 border-r border-border bg-sidebar">
-        <div className="p-4 border-b border-sidebar-border">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-sidebar-foreground">College Chat</h1>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSignOut}
-              className="text-sidebar-foreground hover:bg-sidebar-accent"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
+  const SidebarContent = () => (
+    <>
+      <div className="p-3 md:p-4 border-b border-sidebar-border">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg md:text-xl font-bold text-sidebar-foreground">College Chat</h1>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSignOut}
+            className="text-sidebar-foreground hover:bg-sidebar-accent h-8 w-8 md:h-10 md:w-10"
+          >
+            <LogOut className="h-3 w-3 md:h-4 md:w-4" />
+          </Button>
         </div>
-        <UserListSidebar
-          currentUserId={user.id}
-          selectedUserId={selectedUserId}
-          onUserSelect={setSelectedUserId}
-        />
+      </div>
+      <UserListSidebar
+        currentUserId={user.id}
+        selectedUserId={selectedUserId}
+        onUserSelect={(userId) => {
+          setSelectedUserId(userId);
+          setIsMobileSidebarOpen(false);
+        }}
+      />
+    </>
+  );
+
+  return (
+    <div className="h-screen flex flex-col md:flex-row bg-background">
+      {/* Mobile Header */}
+      <div className="md:hidden border-b border-border bg-sidebar p-3">
+        <div className="flex items-center justify-between">
+          <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-sidebar-foreground">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-80 p-0 bg-sidebar">
+              <SidebarContent />
+            </SheetContent>
+          </Sheet>
+          
+          <h1 className="text-lg font-bold text-sidebar-foreground">College Chat</h1>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleSignOut}
+            className="text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex md:w-80 border-r border-border bg-sidebar">
+        <div className="flex-1 flex flex-col">
+          <SidebarContent />
+        </div>
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         <ChatRoom
           currentUserId={user.id}
           selectedUserId={selectedUserId}

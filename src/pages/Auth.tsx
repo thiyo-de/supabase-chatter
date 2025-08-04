@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,8 +10,15 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 export default function Auth() {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/chat', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,11 +35,6 @@ export default function Auth() {
         title: "Sign In Error",
         description: error.message,
         variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
       });
     }
     

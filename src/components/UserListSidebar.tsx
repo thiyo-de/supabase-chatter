@@ -104,7 +104,7 @@ export function UserListSidebar({ currentUserId, selectedUserId, onUserSelect }:
 
   return (
     <div className="flex-1 overflow-hidden">
-      <div className="p-4 space-y-4">
+      <div className="p-3 md:p-4 space-y-3 md:space-y-4">
         {/* Public Chat Button */}
         <Button
           variant={selectedUserId === null ? "default" : "ghost"}
@@ -116,38 +116,38 @@ export function UserListSidebar({ currentUserId, selectedUserId, onUserSelect }:
         </Button>
 
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-sidebar-foreground/70">
+          <h3 className="text-xs md:text-sm font-medium text-sidebar-foreground/70">
             Users ({profiles.length})
           </h3>
           
-          <div className="space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto">
+          <div className="space-y-1 max-h-[calc(100vh-180px)] md:max-h-[calc(100vh-200px)] overflow-y-auto">
             {profiles.map((profile) => (
               <Button
                 key={profile.id}
                 variant={selectedUserId === profile.user_id ? "secondary" : "ghost"}
-                className="w-full justify-start p-3 h-auto"
+                className="w-full justify-start p-2 md:p-3 h-auto"
                 onClick={() => onUserSelect(profile.user_id)}
               >
-                <div className="flex items-center space-x-3 w-full">
+                <div className="flex items-center space-x-2 md:space-x-3 w-full">
                   <div className="relative">
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="h-6 w-6 md:h-8 md:w-8">
                       <AvatarImage src={profile.avatar_url} />
                       <AvatarFallback className="text-xs">
                         {getInitials(profile.username)}
                       </AvatarFallback>
                     </Avatar>
                     {profile.is_online && (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-sidebar"></div>
+                      <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full border-2 border-sidebar"></div>
                     )}
                   </div>
                   
                   <div className="flex-1 text-left min-w-0">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium truncate">
+                    <div className="flex items-center space-x-1 md:space-x-2">
+                      <span className="text-xs md:text-sm font-medium truncate">
                         {profile.username}
                       </span>
                       {profile.is_online && (
-                        <Badge variant="secondary" className="text-xs px-1 py-0">
+                        <Badge variant="secondary" className="text-xs px-1 py-0 hidden md:inline-flex">
                           Online
                         </Badge>
                       )}
@@ -159,7 +159,7 @@ export function UserListSidebar({ currentUserId, selectedUserId, onUserSelect }:
                     )}
                   </div>
                   
-                  <MessageSquare className="h-4 w-4 text-sidebar-foreground/50" />
+                  <MessageSquare className="h-3 w-3 md:h-4 md:w-4 text-sidebar-foreground/50" />
                 </div>
               </Button>
             ))}
